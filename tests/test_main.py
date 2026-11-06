@@ -2,7 +2,9 @@
 import pytest
 
 from main import (
+    BaseProduct,
     Category,
+    CreationLoggerMixin,
     LawnGrass,
     Product,
     Smartphone,
@@ -497,3 +499,55 @@ class TestAddProductRestriction:
     def test_add_product_rejects_none(self, empty_category):
         with pytest.raises(TypeError):
             empty_category.add_product(None)
+
+
+class TestBaseProduct:
+    def test_base_product_cannot_be_instantiated(self):
+        with pytest.raises(TypeError):
+            BaseProduct("Имя", "Описание", 100.0, 1)
+
+    def test_product_is_subclass_of_base(self):
+        assert issubclass(Product, BaseProduct)
+
+    def test_smartphone_inherits_only_product(self):
+        assert Smartphone.__bases__ == (Product,)
+
+    def test_lawn_grass_inherits_only_product(self):
+        assert LawnGrass.__bases__ == (Product,)
+
+    def test_base_product_in_mro(self):
+        assert BaseProduct in Product.__mro__
+
+    def test_common_str_inherited_from_base(self):
+        product = Product("Товар", "Описание", 100.0, 2)
+        assert str(product) == "Товар, 100.0 руб. Остаток: 2 шт."
+
+
+class TestCreationLoggerMixin:
+    def test_mixin_in_mro(self):
+        assert CreationLoggerMixin in Product.__mro__
+
+    def test_creation_prints_product_info(self, capsys):
+        product = Product("Товар", "Описание", 100.0, 2)
+        captured = capsys.readouterr()
+        assert (
+            "Product('Товар', 'Описание', 100.0, 2)\n"
+            in captured.out
+        )
+        assert product.name == "Товар"
+
+    def test_repr_format(self):
+        product = Product("Товар", "Описание", 100.0, 2)
+        assert repr(product) == "Product('Товар', 'Описание', 100.0, 2)"
+
+    def test_smartphone_creation_prints_class_name(self, capsys):
+        smartphone = Smartphone("A", "B", 1.0, 1, 1.0, "M", 1, "C")
+        captured = capsys.readouterr()
+        assert "Smartphone(" in captured.out
+        assert smartphone.name == "A"
+
+    def test_grass_creation_prints_class_name(self, capsys):
+        grass = LawnGrass("G", "D", 1.0, 1, "RU", "3", "Green")
+        captured = capsys.readouterr()
+        assert "LawnGrass(" in captured.out
+        assert grass.country == "RU"
