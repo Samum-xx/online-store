@@ -551,3 +551,56 @@ class TestCreationLoggerMixin:
         captured = capsys.readouterr()
         assert "LawnGrass(" in captured.out
         assert grass.country == "RU"
+
+
+class TestZeroQuantity:
+    def test_product_zero_quantity_raises(self):
+        with pytest.raises(ValueError) as exc_info:
+            Product("Товар", "Описание", 100.0, 0)
+        assert str(exc_info.value) == (
+            "Товар с нулевым количеством не может быть добавлен"
+        )
+
+    def test_product_zero_quantity_message_match(self):
+        with pytest.raises(
+            ValueError,
+            match="Товар с нулевым количеством не может быть добавлен",
+        ):
+            Product("Товар", "Описание", 100.0, 0)
+
+    def test_smartphone_zero_quantity_raises(self):
+        with pytest.raises(ValueError):
+            Smartphone("A", "B", 1.0, 0, 1.0, "M", 1, "C")
+
+    def test_lawn_grass_zero_quantity_raises(self):
+        with pytest.raises(ValueError):
+            LawnGrass("G", "D", 1.0, 0, "RU", "3", "Green")
+
+    def test_positive_quantity_still_works(self):
+        product = Product("Товар", "Описание", 100.0, 1)
+        assert product.quantity == 1
+
+
+class TestMiddlePrice:
+    def test_average_of_two(self, product_one, product_two):
+        category = Category("С", "О", [product_one, product_two])
+        assert category.middle_price() == (180000.0 + 210000.0) / 2
+
+    def test_average_of_three(self, product_one, product_two):
+        third = Product("Xiaomi", "1024GB", 31000.0, 14)
+        category = Category(
+            "С", "О", [product_one, product_two, third]
+        )
+        expected = (180000.0 + 210000.0 + 31000.0) / 3
+        assert category.middle_price() == expected
+
+    def test_empty_category_returns_zero(self, empty_category):
+        assert empty_category.middle_price() == 0
+
+    def test_single_product(self, product_one):
+        category = Category("С", "О", [product_one])
+        assert category.middle_price() == 180000.0
+
+    def test_result_is_float(self, product_one):
+        category = Category("С", "О", [product_one])
+        assert isinstance(category.middle_price(), float)
