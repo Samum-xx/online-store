@@ -21,3 +21,8 @@ pytest-cov = "^6.0"
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+
+[tool.coverage.report]
+exclude_lines = [
+    "if __name__ == .__main__.:",
+]
