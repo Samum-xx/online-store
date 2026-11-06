@@ -1,0 +1,23 @@
+[project]
+name = "online-store"
+version = "0.1.0"
+description = "Ядро интернет-магазина: сущности Product и Category"
+authors = [
+    {name = "Samum-xx", email = "mariakhusainova9@gmail.com"},
+]
+requires-python = ">=3.12"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3"
+flake8 = "^7.1"
+pytest-cov = "^6.0"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
