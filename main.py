@@ -15,13 +15,13 @@ class Product:
     ) -> None:
         self.name = name
         self.description = description
-        self._price = price
+        self.__price = price
         self.quantity = quantity
 
     @property
     def price(self) -> float:
         """Возвращает текущую цену товара."""
-        return self._price
+        return self.__price
 
     @price.setter
     def price(self, new_price: float) -> None:
@@ -29,13 +29,13 @@ class Product:
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
             return
-        if new_price < self._price:
+        if new_price < self.__price:
             answer = input(
                 "Цена понижается. Подтвердите действие (y/n): "
             )
             if answer.lower() != "y":
                 return
-        self._price = new_price
+        self.__price = new_price
 
     @classmethod
     def new_product(

@@ -49,7 +49,11 @@ class TestProduct:
 
     def test_price_attribute_is_private(self, product_one):
         assert "price" not in product_one.__dict__
-        assert "_price" in product_one.__dict__
+        assert "_Product__price" in product_one.__dict__
+
+    def test_direct_private_access_raises(self, product_one):
+        with pytest.raises(AttributeError):
+            getattr(product_one, "__price")  # noqa: B009
 
     def test_setter_updates_positive_price(self, product_one):
         product_one.price = 200000.0
